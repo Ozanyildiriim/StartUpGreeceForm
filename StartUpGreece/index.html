@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Custom Form</title>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+	<h1>Custom Form</h1>
+
+	<form id="custom-form">
+		<div id="fields-container">
+			<div class="field">
+				<label for="field-1">Field 1:</label>
+				<select name="field-1-type">
+					<option value="text">Text</option>
+					<option value="select">Select</option>
+				</select>
+				<input type="text" name="field-1-value">
+				<button type="button" class="remove-field">Remove</button>
+			</div>
+		</div>
+
+		<button type="button" id="add-field">Add Field</button>
+		<button type="submit" id="submit-form">Submit</button>
+	</form>
+
+	<table id="form-data">
+		<thead>
+			<tr>
+				<th>Field Name</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+
+	<script>
+		$(document).ready(function() {
+			var fieldCount = 1;
+
+			$("#add-field").click(function() {
+				fieldCount++;
+
+				var newField = '<div class="field">';
+				newField += '<label for="field-' + fieldCount + '">Field ' + fieldCount + ':</label>';
+				newField += '<select name="field-' + fieldCount + '-type">';
+				newField += '<option value="text">Text</option>';
+				newField += '<option value="select">Select</option>';
+				newField += '</select>';
+				newField += '<input type="text" name="field-' + fieldCount + '-value">';
+				newField += '<button type="button" class="remove-field">Remove</button>';
+				newField += '</div>';
+
+				$("#fields-container").append(newField);
+			});
+
+			$("#custom-form").on("click", ".remove-field", function() {
+				$(this).parent(".field").remove();
+				fieldCount--;
+			});
+
+			$("#custom-form").submit(function(event) {
+				event.preventDefault();
+
+				var formData = {};
+				$(this).serializeArray().forEach(function(input) {
+					formData[input.name] = input.value;
+				});
+
+				$("#form-data tbody").empty();
+				for (var i = 1; i <= fieldCount; i++) {
+					var fieldName = $("select[name='field-" + i + "-type'] option:selected").text();
+					var fieldValue = $("input[name='field-" + i + "-value']").val();
+					$("#form-data tbody").append("<tr><td>" + fieldName + "</td><td>" + fieldValue + "</td></tr>");
+				}
+			});
+		});
+	</script>
+</body>
+</html>
